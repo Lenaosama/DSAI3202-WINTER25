@@ -2,9 +2,15 @@ import argparse
 import time
 import threading
 import multiprocessing
+import sys
+import os
 
-from src.computation import generate_and_add_numbers, generate_and_join_letters
-from src.performance import measure_execution_time
+# Add the 'src' directory to the Python path so imports from src can be resolved
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+
+# Now you can import as if 'src' is in the root
+from computation import generate_and_add_numbers, generate_and_join_letters
+from performance import measure_execution_time
 
 def run_sequential():
     print("Running in sequential mode...")
@@ -46,4 +52,9 @@ def run_multiprocessing():
     process_letters.join()
 
     end_time = time.time()
-    print(f"Multiproces
+    print(f"Multiprocessing execution time: {end_time - start_time} seconds")
+
+if __name__ == "__main__":
+    run_sequential()
+    run_threading()
+    run_multiprocessing()
