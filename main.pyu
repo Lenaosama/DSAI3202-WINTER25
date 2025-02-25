@@ -1,0 +1,19 @@
+from src.sequential import sequential_sum
+from src.threading import parallel_sum_threaded
+from src.multiprocessing import parallel_sum_multiprocessing
+
+def main():
+    # Sequential sum
+    print("Running Sequential Approach:")
+    sequential_sum(10**6)
+
+    # Threading sum
+    print("\nRunning Threading Approach:")
+    parallel_sum_threaded(10**6, num_threads=4)
+
+    # Multiprocessing sum
+    print("\nRunning Multiprocessing Approach:")
+    parallel_sum_multiprocessing(10**6, num_processes=4)
+
+if __name__ == "__main__":
+    main()
