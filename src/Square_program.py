@@ -24,7 +24,7 @@ def multiprocessing_individual(numbers):
     results = manager.list()
     processes = []
 
-    # Use a fixed number of processes (e.g., number of CPU cores)
+    # Use a fixed number of processes (number of CPU cores)
     num_processes = cpu_count()
     chunk_size = len(numbers) // num_processes
 
