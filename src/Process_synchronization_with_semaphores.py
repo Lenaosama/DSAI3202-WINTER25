@@ -22,7 +22,7 @@ class ConnectionPool:
 # Function to simulate a process accessing the database
 def access_database(pool):
     connection = pool.get_connection()  # Get a connection
-    time.sleep(2)  # Simulate work (e.g., database operation)
+    time.sleep(2)  # Simulate work
     pool.release_connection(connection)  # Release the connection
 
 # Main script
