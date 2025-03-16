@@ -1,2 +1,2 @@
 No external dependencies are required for this project.
-All libraries used (multiprocessing, concurrent.futures, time) are part of Python's standard library.
+All libraries used (multiprocessing, concurrent.futures, time) are part of Python standard library.
