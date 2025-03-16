@@ -1,26 +1,25 @@
 # DSAI3202-WINTER25
 Parallel and distributed computing repository for labs and assignments. Created on 14/1/2025 by Lena Swaileh.
-# Lab 3: Parallel and Distributed Computing
 
-## Objectives:
-- Implement data parallel models using threads and processes.
-- Measure execution times for different parallelization strategies.
-- Analyze performance differences between sequential, threading, and multiprocessing approaches.
 
-## Tasks:
-1. Implement sequential summation of numbers from 1 to a large number.
-2. Implement parallel summation using threads.
-3. Implement parallel summation using multiprocessing.
-4. Measure and compare execution times for all approaches.
-5. Calculate performance metrics such as speedup and efficiency.
+# Project Title
+Image Processing for Tumor Detection
 
-## Structure:
-- `src/`: Contains the source code for sequential, threading, and multiprocessing implementations.
-- `test/`: Contains test scripts for validating the implementations.
-- `main.py`: The entry point for executing the lab tasks.
-- `requirements.txt`: Python dependencies.
+# Description
+This project focuses on detecting tumors using image processing techniques. It involves preprocessing medical images, applying filters, and using machine learning models for tumor classification.
 
-## How to Run:
-1. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
+# Features
+Image preprocessing (grayscale conversion, noise reduction, contrast enhancement)
+Feature extraction using image processing techniques
+Tumor classification using machine learning models
+Visualization of processed images and detection results
+
+## How to Run the Code
+### Install dependencies:
+pip install -r requirements.txt
+### Run the Jupyter Notebook:
+jupyter notebook ImageProcessingForTumorDetection.ipynb
+
+# Results
+The model successfully identifies tumor regions with high accuracy.
+Image processing enhances contrast and feature detection for better classification.
