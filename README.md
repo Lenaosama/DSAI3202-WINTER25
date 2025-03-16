@@ -1,6 +1,7 @@
 # DSAI3202-WINTER25
 Parallel and distributed computing repository for labs and assignments. Created on 14/1/2025 by Lena Swaileh.
 
+
 # Project Title
 Performance Comparison: Sequential Execution vs. Threads vs. Processes
 
@@ -17,5 +18,5 @@ Performance metrics: execution time, speedup, and efficiency
 Multiprocessing achieved a 2.28x speedup and 57% efficiency, making it the best option for CPU-bound tasks.
 Multithreading showed minimal improvement due to Python’s Global Interpreter Lock (GIL).
 
-How to Run the Code:
+## How to Run the Code:
 python main.py
