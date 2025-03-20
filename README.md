@@ -17,7 +17,7 @@ Tests with 1 million and 10 million numbers.
 
 ### **Output:**
 === Running Square Program ===
-Running test with 1000000 numbers...
+Running test with 1 million numbers...
 Sequential for loop time: 0.0718 seconds
 Multiprocessing separate process time: 0.0969 seconds
 Multiprocessing pool map() time: 0.0918 seconds

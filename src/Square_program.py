@@ -1,85 +1,90 @@
 import time
-from multiprocessing import Process, Manager, Pool, cpu_count
-from concurrent.futures import ProcessPoolExecutor
+import random
+import multiprocessing
+import concurrent.futures
 
-# Function to calculate the square of a number
+# 1. Square function
 def square(n):
     return n * n
 
-# Function to generate a list of numbers
-def generate_numbers(size):
-    return list(range(1, size + 1))
+# 2. Generate list of 10^6 (1 million) random numbers
+def generate_numbers(n):
+    return [random.randint(1, 100) for _ in range(n)]
 
-# Sequential execution
-def sequential_execution(numbers):
+# 3. Sequential for loop
+def sequential_square(numbers):
+    results = []
+    for num in numbers:
+        results.append(square(num))
+    return results
+
+# 4. Multiprocessing with a separate process for each number
+def process_square(n):
+    return square(n)
+
+def multiprocessing_separate_process(numbers):
+    # Use a pool with a number of processes equal to the number of available CPUs
+    num_processes = multiprocessing.cpu_count()
+    with multiprocessing.Pool(processes=num_processes) as pool:
+        results = pool.map(process_square, numbers)
+    return results
+
+# 5. Multiprocessing Pool with `map()`
+def pool_map_square(numbers):
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        results = pool.map(square, numbers)
+    return results
+
+# 6. Multiprocessing Pool with `apply()`
+def pool_apply_square(numbers):
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        results = [pool.apply(square, args=(num,)) for num in numbers]
+    return results
+
+# 7. Using concurrent.futures ProcessPoolExecutor
+def executor_square(numbers):
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = list(executor.map(square, numbers))
+    return results
+
+# Test function for both 10^6 and 10^7 numbers
+def run_tests(numbers):
+    print(f"Running test with {len(numbers)} numbers...")
+
+    # Sequential test
     start_time = time.time()
-    squares = [square(n) for n in numbers]
-    end_time = time.time()
-    print(f"Sequential Execution Time: {end_time - start_time:.4f} seconds")
+    sequential_square(numbers)
+    print(f"Sequential for loop time: {time.time() - start_time:.4f} seconds")
 
-# Multiprocessing: Fixed number of processes
-def multiprocessing_individual(numbers):
+    # Multiprocessing separate process test
     start_time = time.time()
-    manager = Manager()
-    results = manager.list()
-    processes = []
+    multiprocessing_separate_process(numbers)
+    print(f"Multiprocessing separate process time: {time.time() - start_time:.4f} seconds")
 
-    # Use a fixed number of processes (number of CPU cores)
-    num_processes = cpu_count()
-    chunk_size = len(numbers) // num_processes
-
-    for i in range(num_processes):
-        start = i * chunk_size
-        end = (i + 1) * chunk_size if i < num_processes - 1 else len(numbers)
-        p = Process(target=lambda x: results.extend([square(n) for n in x]), args=(numbers[start:end],))
-        processes.append(p)
-        p.start()
-
-    for p in processes:
-        p.join()
-
-    end_time = time.time()
-    print(f"Multiprocessing (Fixed Processes) Execution Time: {end_time - start_time:.4f} seconds")
-
-# Multiprocessing using Pool (map and apply)
-def multiprocessing_pool(numbers):
-    # Using map (synchronous)
+    # Multiprocessing Pool with map()
     start_time = time.time()
-    with Pool() as pool:
-        squares = pool.map(square, numbers)
-    end_time = time.time()
-    print(f"Multiprocessing (Pool - map) Execution Time: {end_time - start_time:.4f} seconds")
+    pool_map_square(numbers)
+    print(f"Multiprocessing pool map() time: {time.time() - start_time:.4f} seconds")
 
-    # Using apply_async (asynchronous)
+    # Multiprocessing Pool with apply()
     start_time = time.time()
-    with Pool() as pool:
-        results = [pool.apply_async(square, (n,)) for n in numbers]
-        squares = [result.get() for result in results]
-    end_time = time.time()
-    print(f"Multiprocessing (Pool - apply_async) Execution Time: {end_time - start_time:.4f} seconds")
+    pool_apply_square(numbers)
+    print(f"Multiprocessing pool apply() time: {time.time() - start_time:.4f} seconds")
 
-# Multiprocessing using ProcessPoolExecutor
-def multiprocessing_futures(numbers):
+    # ProcessPoolExecutor
     start_time = time.time()
-    with ProcessPoolExecutor() as executor:
-        squares = list(executor.map(square, numbers))
-    end_time = time.time()
-    print(f"Multiprocessing (ProcessPoolExecutor) Execution Time: {end_time - start_time:.4f} seconds")
+    executor_square(numbers)
+    print(f"ProcessPoolExecutor time: {time.time() - start_time:.4f} seconds")
 
-# Main script
 if __name__ == "__main__":
-    # Test with 1 million numbers
-    print("Testing with 1 million numbers")
-    numbers_1m = generate_numbers(1_000_000)
-    sequential_execution(numbers_1m)
-    multiprocessing_individual(numbers_1m)
-    multiprocessing_pool(numbers_1m)
-    multiprocessing_futures(numbers_1m)
+    # Generate list of 10^6 numbers
+    numbers_1_million = generate_numbers(10**6)
 
-    # Test with 10 million numbers
-    print("\nTesting with 10 million numbers")
-    numbers_10m = generate_numbers(10_000_000)
-    sequential_execution(numbers_10m)
-    multiprocessing_individual(numbers_10m)
-    multiprocessing_pool(numbers_10m)
-    multiprocessing_futures(numbers_10m)
+    # Run tests with 10^6 numbers
+    run_tests(numbers_1_million)
+
+    # Now test with 10^7 numbers (10 million)
+    numbers_10_million = generate_numbers(10**7)
+
+    print("\nRunning tests with 10 million numbers...")
+    run_tests(numbers_10_million)
