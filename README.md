@@ -15,6 +15,30 @@ Compares sequential and parallel execution for computing squares of numbers.
 ### **Main Script:**
 Tests with 1 million and 10 million numbers.
 
+### **Output:**
+=== Running Process Synchronization with Semaphores ===
+Process Process-2:1 acquired connection 0
+Process Process-3:1 acquired connection 1
+Process Process-4:1 acquired connection 2
+Process Process-2:2 released connection 0
+Process Process-5:1 acquired connection 0
+Process Process-3:2 released connection 1
+Process Process-6:1 acquired connection 1
+Process Process-4:2 released connection 2
+Process Process-7:1 acquired connection 2
+Process Process-5:2 released connection 0
+Process Process-6:2 released connection 1
+Process Process-9:1 acquired connection 0
+Process Process-8:1 acquired connection 1
+Process Process-7:2 released connection 2
+Process Process-10:1 acquired connection 2
+Process Process-9:2 released connection 0
+Process Process-11:1 acquired connection 0
+Process Process-8:2 released connection 1
+Process Process-10:2 released connection 2
+Process Process-11:2 released connection 0
+All processes completed.
+
 ### **Conclusions**  
 Sequential execution was the fastest for small datasets, taking 0.0843 seconds for 1 million numbers and 0.5192 seconds for 10 million. It has no overhead from managing processes but slows down with larger datasets. Multiprocessing with fixed processes improved performance for large datasets, running in 0.1424 seconds for 1 million numbers and 1.0806 seconds for 10 million, though it was slower for small ones due to process creation overhead. `Pool.map` had similar results, taking 0.1801 seconds for 1 million and 1.2370 seconds for 10 million, with slight overhead from managing the worker pool.  
 
