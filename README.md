@@ -40,12 +40,10 @@ Process Process-11:2 released connection 0
 All processes completed.
 
 ### **Conclusions**  
-Sequential execution was the fastest for small datasets, taking 0.0843 seconds for 1 million numbers and 0.5192 seconds for 10 million. It has no overhead from managing processes but slows down with larger datasets. Multiprocessing with fixed processes improved performance for large datasets, running in 0.1424 seconds for 1 million numbers and 1.0806 seconds for 10 million, though it was slower for small ones due to process creation overhead. `Pool.map` had similar results, taking 0.1801 seconds for 1 million and 1.2370 seconds for 10 million, with slight overhead from managing the worker pool.  
-
-In contrast, `apply_async` was much slower, requiring 52.5729 seconds for 1 million and 526.2259 seconds for 10 million due to high task management overhead. `ProcessPoolExecutor` was the worst, taking 107.3116 seconds for 1 million and failing for 10 million because of excessive resource usage.  
+Process synchronization using semaphores effectively managed resource allocation, ensuring controlled access to limited connections. The execution followed an orderly pattern where each process acquired and released connections sequentially. Processes successfully acquired available connections, as seen with Process-2, Process-3, and Process-4 securing connections 0, 1, and 2 initially. As they released connections, subsequent processes, such as Process-5, Process-6, and Process-7, utilized the freed resources. This pattern continued until all processes completed execution.  
 
 ### **Key Takeaways**  
-Sequential execution is best for small datasets. For large datasets, multiprocessing with fixed processes (0.1424s for 1M, 1.0806s for 10M) or `Pool.map` (0.1801s for 1M, 1.2370s for 10M) is most efficient. Asynchronous methods like `apply_async` (52.5729s for 1M, 526.2259s for 10M) and `ProcessPoolExecutor` (107.3116s for 1M, failed for 10M) add too much overhead and should be avoided. Large datasets require careful resource management.
+Semaphores efficiently regulated resource access among multiple processes, ensuring that connections were consistently allocated and released without deadlocks. The structured execution allowed all processes to complete without conflicts, demonstrating the importance of controlled resource management in concurrent applications. Proper synchronization mechanisms like semaphores prevent excessive contention and ensure smooth execution in multi-process environments.
 
 
 ## Process Synchronization with Semaphores 
