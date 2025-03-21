@@ -10,7 +10,6 @@ from src.genetic_algorithm_trial import (
 
 num_nodes = distance_matrix.shape[0]
 
-# Import your functions
 from src.genetic_algorithms_functions import (
     calculate_fitness,
     generate_unique_population,
@@ -58,13 +57,20 @@ if __name__ == "__main__":
             best_idx = np.argmin(fitness)
             print(f"Generation {gen}: Best calculate_fitness = {fitness[best_idx]}")
 
+            # Selection
             selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
 
             new_population = [population[best_idx]]  # Elitism
-            while len(new_population) < population_size:
-                p1, p2 = np.random.choice(selected, 2, replace=False)
-                child = order_crossover(p1, p2)
-                new_population.append(mutate(child))
+
+            # ✅ Check if selected is not empty before crossover
+            if selected:
+                while len(new_population) < population_size:
+                    p1, p2 = np.random.choice(selected, 2, replace=False)
+                    child = order_crossover(p1, p2)
+                    new_population.append(mutate(child))
+            else:
+                print(f"⚠️ Generation {gen}: No valid individuals selected. Regenerating population.")
+                new_population = generate_unique_population(population_size, num_nodes)
 
             population = new_population
 
