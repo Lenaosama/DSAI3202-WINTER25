@@ -55,27 +55,32 @@ if __name__ == "__main__":
 
         if rank == 0:
             best_idx = np.argmin(fitness)
-            print(f"Generation {gen}: Best calculate_fitness = {fitness[best_idx]}")
+            best_fitness = fitness[best_idx]
+            print(f"Generation {gen}: Best calculate_fitness = {best_fitness}")
 
-            # Selection
+            if gen == generations - 1:
+                print("Best Solution:", population[best_idx])
+                print("Total Distance:", -best_fitness)  # Negate because fitness = -distance
+                break  # ✅ stop here
+
             selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
 
             new_population = [population[best_idx]]  # Elitism
 
-            # ✅ Check if selected is not empty before crossover
-            if selected:
+            if len(selected) >= 2:
                 while len(new_population) < population_size:
                     p1, p2 = np.random.choice(selected, 2, replace=False)
                     child = order_crossover(p1, p2)
                     new_population.append(mutate(child))
             else:
-                print(f"⚠️ Generation {gen}: No valid individuals selected. Regenerating population.")
+                print(f"⚠️ Generation {gen}: Not enough valid individuals. Regenerating.")
                 new_population = generate_unique_population(population_size, num_nodes)
 
             population = new_population
 
-        # Sync population across all ranks
+        # Broadcast new population to all processes
         population = comm.bcast(population, root=0)
+
 
     if rank == 0:
         print(f"\n✅ GA completed in {time.time() - start_time:.2f} seconds.")
