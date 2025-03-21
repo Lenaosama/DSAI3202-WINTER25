@@ -13,7 +13,8 @@ def calculate_fitness(route,
         - float: The negative total distance traveled (negative because we want to minimize distance).
            Returns a large negative penalty if the route is infeasible.
     """
-      if len(set(route)) != len(route) or len(route) != distance_matrix.shape[0]:
+ # Check for duplicates or missing nodes
+    if len(set(route)) != len(route) or len(route) != distance_matrix.shape[0]:
         return np.inf  # Invalid individual (duplicate or missing nodes)
 
     total_distance = 0.0
@@ -33,8 +34,7 @@ def calculate_fitness(route,
         total_distance += 1e6
     else:
         total_distance += end_to_start
-   
-    
+
     return -total_distance
 
 
