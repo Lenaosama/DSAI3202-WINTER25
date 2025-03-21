@@ -3,15 +3,10 @@ import numpy as np
 import time
 import pandas as pd
 
-<<<<<<< HEAD
 # Replace 'city_distances.csv' with your actual file path
 distance_matrix = pd.read_csv("city_distances.csv", header=None).values
 
-
-from src.genetic_algorithms_functions import (
-=======
 from src. genetic_algorithms_functions import (
->>>>>>> b2753c5 (check)
     calculate_fitness,
     generate_unique_population,
     select_in_tournament,
