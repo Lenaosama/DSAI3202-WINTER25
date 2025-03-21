@@ -2,9 +2,24 @@ from mpi4py import MPI
 import numpy as np
 import pandas as pd
 import time
-import random  # Required for random.sample
+import random  # Added for sampling parents without numpy error
 
-# ... (imports and MPI setup)
+from src.genetic_algorithm_trial import distance_matrix
+
+num_nodes = distance_matrix.shape[0]
+
+from src.genetic_algorithms_functions import (
+    calculate_fitness,
+    generate_unique_population,
+    select_in_tournament,
+    order_crossover,
+    mutate,
+)
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
 
 if __name__ == "__main__":
     population_size = 100
