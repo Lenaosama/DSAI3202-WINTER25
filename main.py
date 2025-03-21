@@ -2,7 +2,7 @@ from mpi4py import MPI
 import numpy as np
 import pandas as pd
 import time
-import random  # Added for sampling parents without numpy error
+import random
 
 from src.genetic_algorithm_trial import distance_matrix
 
@@ -21,6 +21,25 @@ rank = comm.Get_rank()
 size = comm.Get_size()
 
 
+def parallel_fitness_evaluation(population, distance_matrix):
+    chunk_size = len(population) // size
+    start = rank * chunk_size
+    end = len(population) if rank == size - 1 else (rank + 1) * chunk_size
+    local_population = population[start:end]
+
+    local_fitness = np.array([calculate_fitness(ind, distance_matrix) for ind in local_population])
+
+    all_fitness = None
+    if rank == 0:
+        all_fitness = np.empty(len(population), dtype=np.float64)
+
+    comm.Gather(local_fitness, all_fitness, root=0)
+    return all_fitness if rank == 0 else None
+
+
+# ------------------------
+# Main Execution Block
+# ------------------------
 if __name__ == "__main__":
     population_size = 100
     generations = 200
@@ -45,7 +64,8 @@ if __name__ == "__main__":
 
             selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
 
-            new_population = [population[best_idx]]  # Elitism
+            new_population = [population[best_idx]]
+
             if len(selected) >= 2:
                 while len(new_population) < population_size:
                     p1, p2 = random.sample(selected, 2)
