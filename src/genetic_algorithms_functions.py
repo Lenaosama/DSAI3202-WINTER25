@@ -13,26 +13,27 @@ def calculate_fitness(route,
         - float: The negative total distance traveled (negative because we want to minimize distance).
            Returns a large negative penalty if the route is infeasible.
     """
-    total_distance = 0
-    
-    # add your code here.
-    num_nodes = len(route)
-    
-    for i in range(num_nodes - 1):
-        start, end = route[i], route[i + 1]
-        distance = distance_matrix[start, end]
-        
-        # Penalize infeasible routes (where distance is set to 100000.0)
+      if len(set(route)) != len(route) or len(route) != distance_matrix.shape[0]:
+        return np.inf  # Invalid individual (duplicate or missing nodes)
+
+    total_distance = 0.0
+    for i in range(len(route) - 1):
+        start = route[i]
+        end = route[i + 1]
+        distance = distance_matrix[start][end]
+
         if distance == 100000.0:
-            return float('inf')  # Assign an extremely high penalty
-        
-        total_distance += distance
-    
-    # Include the return trip to the depot (assumed to be node 0)
-    last_leg = distance_matrix[route[-1], route[0]]
-    if last_leg == 100000.0:
-        return float('inf')
-    total_distance += last_leg
+            total_distance += 1e6  # Penalize unreachable path
+        else:
+            total_distance += distance
+
+    # Optional: return to start (complete tour)
+    end_to_start = distance_matrix[route[-1]][route[0]]
+    if end_to_start == 100000.0:
+        total_distance += 1e6
+    else:
+        total_distance += end_to_start
+   
     
     return -total_distance
 
