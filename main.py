@@ -2,14 +2,15 @@ from mpi4py import MPI
 import numpy as np
 import time
 
-from genetic_algorithms_functions import (
+from src.genetic_algorithms_functions import (
     calculate_fitness,
     generate_unique_population,
     select_in_tournament,
     order_crossover,
     mutate,
-    distance_matrix
+    distance_matrix  # Import the distance_matrix variable
 )
+
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
