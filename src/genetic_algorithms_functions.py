@@ -34,7 +34,7 @@ def calculate_fitness(route,
         return float('inf')
     total_distance += last_leg
 
-    return total_distance  # No explicit negation needed
+    return -total_distance  # No explicit negation needed
 
 
 def select_in_tournament(population,
