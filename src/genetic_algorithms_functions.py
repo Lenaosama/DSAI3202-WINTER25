@@ -54,7 +54,7 @@ def select_in_tournament(population,
     selected = []
     
     # add your code here.
-      for _ in range(number_tournaments):
+    for _ in range(number_tournaments):
         # Randomly select individuals for the tournament
         tournament_indices = np.random.choice(len(population), tournament_size, replace=False)
         
