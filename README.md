@@ -59,3 +59,7 @@ Parallel Execution: Using MPI4PY, the performance improved with a faster executi
 ## Conclusion
 This project successfully implemented and parallelized a genetic algorithm to solve the fleet management problem, optimizing delivery routes in a city. The algorithm was extended to handle larger problems and multiple vehicles, with performance improvements achieved through parallelization. This solution demonstrates the power of genetic algorithms and parallel computing for solving optimization problems efficiently.
 
+### Machines.txt
+`10.102.1.65`
+`10.102.1.64`
+`10.102.1.67`
