@@ -62,7 +62,11 @@ if __name__ == "__main__":
                 print("Total Distance:", -best_fitness)
                 break
 
-            selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
+            if np.isinf(fitness).all():
+                print(f"Generation {gen}: All individuals infeasible. Regenerating population.")
+                population = generate_unique_population(population_size, num_nodes)
+                continue  # Skip rest of loop for this generation
+
 
             new_population = [population[best_idx]]
 
