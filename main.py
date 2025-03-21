@@ -37,9 +37,7 @@ def parallel_fitness_evaluation(population, distance_matrix):
     return all_fitness if rank == 0 else None
 
 
-# ------------------------
 # Main Execution Block
-# ------------------------
 if __name__ == "__main__":
     population_size = 100
     generations = 200
