@@ -65,20 +65,25 @@ if __name__ == "__main__":
             if np.isinf(fitness).all():
                 print(f"Generation {gen}: All individuals infeasible. Regenerating population.")
                 population = generate_unique_population(population_size, num_nodes)
-                continue  # Skip rest of loop for this generation
-
-
-            new_population = [population[best_idx]]
-
-            if len(selected) >= 2:
-                while len(new_population) < population_size:
-                    p1, p2 = random.sample(selected, 2)
-                    child = order_crossover(p1, p2)
-                    new_population.append(mutate(child))
             else:
-                new_population = generate_unique_population(population_size, num_nodes)
+                selected = select_in_tournament(
+                    population, fitness,
+                    number_tournaments=population_size,
+                    tournament_size=3
+                )
 
-            population = new_population
+                new_population = [population[best_idx]]  # Elitism
+
+                if len(selected) >= 2:
+                    while len(new_population) < population_size:
+                        p1, p2 = random.sample(selected, 2)
+                        child = order_crossover(p1, p2)
+                        new_population.append(mutate(child))
+                else:
+                    population = generate_unique_population(population_size, num_nodes)
+                    continue
+
+                population = new_population
 
         population = comm.bcast(population, root=0)
 
