@@ -3,9 +3,11 @@ import numpy as np
 import pandas as pd
 import time
 
-# Load distance matrix
-distance_matrix = pd.read_csv("data/city_distances.csv", header=None).values
-num_nodes = distance_matrix.shape[0]
+# Import your functions
+from src.genetic_algorithm_trial import (
+    distance_matrix,
+)
+
 
 # Import your functions
 from src.genetic_algorithms_functions import (
