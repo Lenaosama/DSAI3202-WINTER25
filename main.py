@@ -4,7 +4,7 @@ import pandas as pd
 import time
 import random
 
-# Load extended city distance matrix
+# Switch to extended city map
 distance_matrix = pd.read_csv("data/city_distances_extended.csv", header=None).values
 num_nodes = distance_matrix.shape[0]
 
@@ -37,9 +37,6 @@ def parallel_fitness_evaluation(population, distance_matrix):
     return all_fitness if rank == 0 else None
 
 
-# ------------------------
-# Main Execution Block
-# ------------------------
 if __name__ == "__main__":
     population_size = 100
     generations = 200
@@ -68,16 +65,20 @@ if __name__ == "__main__":
                 continue
 
             selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
-            new_population = [population[best_idx]]
 
-            if len(selected) >= 2:
-                while len(new_population) < population_size:
-                    p1, p2 = random.sample(selected, 2)
-                    child = order_crossover(p1, p2)
-                    new_population.append(mutate(child))
-            else:
-                population = generate_unique_population(population_size, num_nodes)
-                continue
+            new_population = [population[best_idx]]  # Elitism
+
+            while len(new_population) < population_size:
+                p1, p2 = random.sample(selected, 2)
+                child = order_crossover(p1, p2)
+                child = mutate(child)
+
+                # Validate and fix child
+                child = [gene for gene in child if gene < num_nodes]
+                if len(set(child)) != num_nodes:
+                    child = [0] + list(np.random.permutation(np.arange(1, num_nodes)))
+
+                new_population.append(child)
 
             population = new_population
 
