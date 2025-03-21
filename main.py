@@ -3,13 +3,12 @@ import numpy as np
 import pandas as pd
 import time
 
-# Import your functions
-from src.genetic_algorithm_trial import (
-    distance_matrix,
-)
+# Import distance matrix from helper file
+from src.genetic_algorithm_trial import distance_matrix
 
 num_nodes = distance_matrix.shape[0]
 
+# Import GA functions
 from src.genetic_algorithms_functions import (
     calculate_fitness,
     generate_unique_population,
@@ -18,6 +17,7 @@ from src.genetic_algorithms_functions import (
     mutate,
 )
 
+# Setup MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -35,7 +35,6 @@ def parallel_fitness_evaluation(population, distance_matrix):
         all_fitness = np.empty(len(population), dtype=np.float64)
 
     comm.Gather(local_fitness, all_fitness, root=0)
-
     return all_fitness if rank == 0 else None
 
 # ------------------------
@@ -43,7 +42,7 @@ def parallel_fitness_evaluation(population, distance_matrix):
 # ------------------------
 if __name__ == "__main__":
     population_size = 100
-    generations = 50
+    generations = 200
 
     population = generate_unique_population(population_size, num_nodes)
 
@@ -60,27 +59,29 @@ if __name__ == "__main__":
 
             if gen == generations - 1:
                 print("Best Solution:", population[best_idx])
-                print("Total Distance:", -best_fitness)  # Negate because fitness = -distance
-                break  # ✅ stop here
+                print("Total Distance:", -best_fitness)
+                break
 
-            selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
+            selected = select_in_tournament(
+                population, fitness,
+                number_tournaments=population_size,
+                tournament_size=3
+            )
 
             new_population = [population[best_idx]]  # Elitism
-
             if len(selected) >= 2:
                 while len(new_population) < population_size:
                     p1, p2 = np.random.choice(selected, 2, replace=False)
                     child = order_crossover(p1, p2)
                     new_population.append(mutate(child))
             else:
-                print(f"⚠️ Generation {gen}: Not enough valid individuals. Regenerating.")
+                print(f"Generation {gen}: Not enough valid individuals. Regenerating population.")
                 new_population = generate_unique_population(population_size, num_nodes)
 
             population = new_population
 
-        # Broadcast new population to all processes
         population = comm.bcast(population, root=0)
 
-
     if rank == 0:
-        print(f"\n✅ GA completed in {time.time() - start_time:.2f} seconds.")
+        duration = time.time() - start_time
+        print(f"GA completed in {duration:.2f} seconds.")
