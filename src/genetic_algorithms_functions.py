@@ -24,15 +24,16 @@ def calculate_fitness(route,
         
         # Penalize infeasible routes (where distance is set to 100000.0)
         if distance == 100000.0:
-            return float('inf')  # Assign an extremely high penalty
+            total_distance += 1e5  # Penalize instead of exiting
         
         total_distance += distance
     
     # Include the return trip to the depot (assumed to be node 0)
     last_leg = distance_matrix[route[-1], route[0]]
     if last_leg == 100000.0:
-        return float('inf')
-    total_distance += last_leg
+      total_distance += 1e5
+    else:
+      total_distance += last_leg
     
     return -total_distance
 
