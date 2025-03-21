@@ -13,29 +13,32 @@ def calculate_fitness(route,
         - float: The negative total distance traveled (negative because we want to minimize distance).
            Returns a large negative penalty if the route is infeasible.
     """
- # Check for duplicates or missing nodes
-    if len(set(route)) != len(route) or len(route) != distance_matrix.shape[0]:
-        return np.inf  # Invalid individual (duplicate or missing nodes)
+ total_distance = 0.0
+    num_nodes = len(distance_matrix)
 
-    total_distance = 0.0
-    for i in range(len(route) - 1):
-        start = route[i]
-        end = route[i + 1]
-        distance = distance_matrix[start][end]
+    # Check feasibility: must start at depot (0), include all unique cities, and cover all nodes
+    if route[0] != 0 or len(set(route)) != num_nodes or len(route) != num_nodes:
+        return float('inf')
 
-        if distance == 100000.0:
-            total_distance += 1e6  # Penalize unreachable path
+    for i in range(num_nodes - 1):
+        from_node = route[i]
+        to_node = route[i + 1]
+        dist = distance_matrix[from_node][to_node]
+
+        # Penalize if there's no direct connection
+        if dist >= 100000:
+            total_distance += 1e6  # Big penalty
         else:
-            total_distance += distance
+            total_distance += dist
 
-    # Optional: return to start (complete tour)
-    end_to_start = distance_matrix[route[-1]][route[0]]
-    if end_to_start == 100000.0:
+    # Return to the start (depot)
+    return_to_start = distance_matrix[route[-1]][route[0]]
+    if return_to_start >= 100000:
         total_distance += 1e6
     else:
-        total_distance += end_to_start
+        total_distance += return_to_start
 
-    return -total_distance
+    return -total_distance  # Negate since we want to **maximize** fitness
 
 
 def select_in_tournament(population,
