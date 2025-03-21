@@ -24,16 +24,15 @@ def calculate_fitness(route,
         
         # Penalize infeasible routes (where distance is set to 100000.0)
         if distance == 100000.0:
-            total_distance += 1e5  # Penalize instead of exiting
+            return float('inf')  # Assign an extremely high penalty
         
         total_distance += distance
     
     # Include the return trip to the depot (assumed to be node 0)
     last_leg = distance_matrix[route[-1], route[0]]
     if last_leg == 100000.0:
-      total_distance += 1e5
-    else:
-      total_distance += last_leg
+        return float('inf')
+    total_distance += last_leg
     
     return -total_distance
 
@@ -135,3 +134,5 @@ def generate_unique_population(population_size, num_nodes):
         individual = [0] + list(np.random.permutation(np.arange(1, num_nodes)))
         population.add(tuple(individual))
     return [list(ind) for ind in population]
+
+
