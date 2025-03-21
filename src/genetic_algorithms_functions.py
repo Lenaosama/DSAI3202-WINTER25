@@ -13,32 +13,26 @@ def calculate_fitness(route,
         - float: The negative total distance traveled (negative because we want to minimize distance).
            Returns a large negative penalty if the route is infeasible.
     """
-    total_distance = 0.0
-    num_nodes = len(distance_matrix)
-
-    # Check feasibility: must start at depot (0), include all unique cities, and cover all nodes
-    if route[0] != 0 or len(set(route)) != num_nodes or len(route) != num_nodes:
-        return float('inf')
-
+    total_distance = 0
+    num_nodes = len(route)
+    
     for i in range(num_nodes - 1):
-        from_node = route[i]
-        to_node = route[i + 1]
-        dist = distance_matrix[from_node][to_node]
+        start, end = route[i], route[i + 1]
+        distance = distance_matrix[start, end]
+        
+        # Penalize infeasible routes (where distance is set to 100000.0)
+        if distance == 100000.0:
+            return float('inf')  # Assign an extremely high penalty
+        
+        total_distance += distance
+    
+    # Include the return trip to the depot (assumed to be node 0)
+    last_leg = distance_matrix[route[-1], route[0]]
+    if last_leg == 100000.0:
+        return float('inf')
+    total_distance += last_leg
 
-        # Penalize if there's no direct connection
-        if dist >= 100000:
-            total_distance += 1e6  # Big penalty
-        else:
-            total_distance += dist
-
-    # Return to the start (depot)
-    return_to_start = distance_matrix[route[-1]][route[0]]
-    if return_to_start >= 100000:
-        total_distance += 1e6
-    else:
-        total_distance += return_to_start
-
-    return -total_distance  # Negate since we want to **maximize** fitness
+    return -total_distance  # No explicit negation needed
 
 
 def select_in_tournament(population,
@@ -60,18 +54,15 @@ def select_in_tournament(population,
     selected = []
     
     # add your code here.
-    for _ in range(number_tournaments):
-        # Randomly select tournament_size individuals from the population
-        idx = np.random.choice(len(population), tournament_size, replace=False)
+      for _ in range(number_tournaments):
+        # Randomly select individuals for the tournament
+        tournament_indices = np.random.choice(len(population), tournament_size, replace=False)
         
-        # Get the best individual from the tournament (highest fitness)
-        best_idx = idx[np.argmax(scores[idx])]
+        # Get the individuals and their corresponding scores
+        tournament_scores = scores[tournament_indices]
+        best_idx = tournament_indices[np.argmin(tournament_scores)]  # Min score (since we're minimizing)
         
-        # Ensure we do not select an infeasible route
-        while scores[best_idx] == -1e6:
-            idx = np.random.choice(len(population), tournament_size, replace=False)
-            best_idx = idx[np.argmax(scores[idx])]
-        
+        # Append the best individual from the tournament
         selected.append(population[best_idx])
     
     
