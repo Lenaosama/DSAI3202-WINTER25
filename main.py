@@ -8,6 +8,7 @@ from src.genetic_algorithm_trial import (
     distance_matrix,
 )
 
+num_nodes = distance_matrix.shape[0]
 
 # Import your functions
 from src.genetic_algorithms_functions import (
