@@ -13,7 +13,7 @@ def calculate_fitness(route,
         - float: The negative total distance traveled (negative because we want to minimize distance).
            Returns a large negative penalty if the route is infeasible.
     """
- total_distance = 0.0
+    total_distance = 0.0
     num_nodes = len(distance_matrix)
 
     # Check feasibility: must start at depot (0), include all unique cities, and cover all nodes
