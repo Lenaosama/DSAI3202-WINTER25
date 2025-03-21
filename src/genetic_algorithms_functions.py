@@ -14,6 +14,8 @@ def calculate_fitness(route,
            Returns a large negative penalty if the route is infeasible.
     """
     total_distance = 0
+                        
+    # add your code here.
     num_nodes = len(route)
     
     for i in range(num_nodes - 1):
