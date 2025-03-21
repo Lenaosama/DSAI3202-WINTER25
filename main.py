@@ -1,15 +1,13 @@
 from mpi4py import MPI
 import numpy as np
-import time
 import pandas as pd
+import time
 
 # Load distance matrix
 distance_matrix = pd.read_csv("data/city_distances.csv", header=None).values
-
-# Ensure correct node count from matrix shape
 num_nodes = distance_matrix.shape[0]
 
-# Import GA functions
+# Import your functions
 from src.genetic_algorithms_functions import (
     calculate_fitness,
     generate_unique_population,
@@ -18,7 +16,6 @@ from src.genetic_algorithms_functions import (
     mutate,
 )
 
-# MPI setup
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -36,16 +33,16 @@ def parallel_fitness_evaluation(population, distance_matrix):
         all_fitness = np.empty(len(population), dtype=np.float64)
 
     comm.Gather(local_fitness, all_fitness, root=0)
+
     return all_fitness if rank == 0 else None
 
-# -----------------------------
-# MAIN EXECUTION BLOCK
-# -----------------------------
+# ------------------------
+# Main Execution Block
+# ------------------------
 if __name__ == "__main__":
     population_size = 100
     generations = 50
 
-    # Initial population (same on all ranks)
     population = generate_unique_population(population_size, num_nodes)
 
     if rank == 0:
@@ -55,18 +52,16 @@ if __name__ == "__main__":
         fitness = parallel_fitness_evaluation(population, distance_matrix)
 
         if rank == 0:
-            best_idx = np.argmin(fitness)  # Minimize distance = maximize fitness (negative)
+            best_idx = np.argmin(fitness)
             print(f"Generation {gen}: Best calculate_fitness = {fitness[best_idx]}")
 
-            # ✅ GA operations
             selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
 
-            new_population = [population[best_idx]]  # Elitism: keep best
+            new_population = [population[best_idx]]  # Elitism
             while len(new_population) < population_size:
                 p1, p2 = np.random.choice(selected, 2, replace=False)
                 child = order_crossover(p1, p2)
-                mutated_child = mutate(child)
-                new_population.append(mutated_child)
+                new_population.append(mutate(child))
 
             population = new_population
 
@@ -74,5 +69,4 @@ if __name__ == "__main__":
         population = comm.bcast(population, root=0)
 
     if rank == 0:
-        duration = time.time() - start_time
-        print(f"\n✅ Parallel GA completed in {duration:.2f} seconds.")
+        print(f"\n✅ GA completed in {time.time() - start_time:.2f} seconds.")
