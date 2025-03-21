@@ -4,7 +4,7 @@ import time
 import pandas as pd
 
 # Replace 'city_distances.csv' with your actual file path
-distance_matrix = pd.read_csv("city_distances.csv", header=None).values
+distance_matrix = pd.read_csv("/src/city_distances.csv", header=None).values
 
 from src. genetic_algorithms_functions import (
     calculate_fitness,
