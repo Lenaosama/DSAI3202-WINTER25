@@ -4,8 +4,8 @@ import pandas as pd
 import time
 import random
 
-from src.genetic_algorithm_trial import distance_matrix
-
+# Load extended city distance matrix
+distance_matrix = pd.read_csv("data/city_distances_extended.csv", header=None).values
 num_nodes = distance_matrix.shape[0]
 
 from src.genetic_algorithms_functions import (
@@ -65,25 +65,21 @@ if __name__ == "__main__":
             if np.isinf(fitness).all():
                 print(f"Generation {gen}: All individuals infeasible. Regenerating population.")
                 population = generate_unique_population(population_size, num_nodes)
+                continue
+
+            selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
+            new_population = [population[best_idx]]
+
+            if len(selected) >= 2:
+                while len(new_population) < population_size:
+                    p1, p2 = random.sample(selected, 2)
+                    child = order_crossover(p1, p2)
+                    new_population.append(mutate(child))
             else:
-                selected = select_in_tournament(
-                    population, fitness,
-                    number_tournaments=population_size,
-                    tournament_size=3
-                )
+                population = generate_unique_population(population_size, num_nodes)
+                continue
 
-                new_population = [population[best_idx]]  # Elitism
-
-                if len(selected) >= 2:
-                    while len(new_population) < population_size:
-                        p1, p2 = random.sample(selected, 2)
-                        child = order_crossover(p1, p2)
-                        new_population.append(mutate(child))
-                else:
-                    population = generate_unique_population(population_size, num_nodes)
-                    continue
-
-                population = new_population
+            population = new_population
 
         population = comm.bcast(population, root=0)
 
