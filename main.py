@@ -3,11 +3,14 @@ import numpy as np
 import time
 import pandas as pd
 
-# Replace 'city_distances.csv' with your actual file path
+# Load distance matrix
 distance_matrix = pd.read_csv("data/city_distances.csv", header=None).values
 
+# Ensure correct node count from matrix shape
+num_nodes = distance_matrix.shape[0]
 
-from src. genetic_algorithms_functions import (
+# Import GA functions
+from src.genetic_algorithms_functions import (
     calculate_fitness,
     generate_unique_population,
     select_in_tournament,
@@ -15,7 +18,7 @@ from src. genetic_algorithms_functions import (
     mutate,
 )
 
-
+# MPI setup
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
@@ -33,18 +36,16 @@ def parallel_fitness_evaluation(population, distance_matrix):
         all_fitness = np.empty(len(population), dtype=np.float64)
 
     comm.Gather(local_fitness, all_fitness, root=0)
-
     return all_fitness if rank == 0 else None
-
 
 # -----------------------------
 # MAIN EXECUTION BLOCK
 # -----------------------------
 if __name__ == "__main__":
-    num_nodes = len(distance_matrix)
     population_size = 100
     generations = 50
 
+    # Initial population (same on all ranks)
     population = generate_unique_population(population_size, num_nodes)
 
     if rank == 0:
@@ -54,24 +55,24 @@ if __name__ == "__main__":
         fitness = parallel_fitness_evaluation(population, distance_matrix)
 
         if rank == 0:
-            best_idx = np.argmin(fitness)  # Minimize total_distance (since it's negative)
+            best_idx = np.argmin(fitness)  # Minimize distance = maximize fitness (negative)
             print(f"Generation {gen}: Best calculate_fitness = {fitness[best_idx]}")
 
-            # ✅ Add logic for selection, crossover, and mutation
+            # ✅ GA operations
             selected = select_in_tournament(population, fitness, number_tournaments=population_size, tournament_size=3)
 
-            new_population = [selected[0]]  # Elitism: keep best
+            new_population = [population[best_idx]]  # Elitism: keep best
             while len(new_population) < population_size:
-                parents = np.random.choice(selected, 2, replace=False)
-                child = order_crossover(parents[0], parents[1])
+                p1, p2 = np.random.choice(selected, 2, replace=False)
+                child = order_crossover(p1, p2)
                 mutated_child = mutate(child)
                 new_population.append(mutated_child)
 
             population = new_population
 
-        # Broadcast the new population to all processes
+        # Sync population across all ranks
         population = comm.bcast(population, root=0)
 
     if rank == 0:
         duration = time.time() - start_time
-        print(f"Parallel fitness evaluation took {duration:.2f} seconds.")
+        print(f"\n✅ Parallel GA completed in {duration:.2f} seconds.")
