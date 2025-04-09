@@ -36,6 +36,16 @@ Process 0 on vg-DSAI-3202-8: Max square = 10000000000000000
 Process 0 on vg-DSAI-3202-8: Time taken = 3.36 seconds
 Process 1 on vg-DSAI-3202-8: Computed 50000000 squares.
 
+(base) student@vg-DSAI-3202-8:~$ mpirun -np 6 --hostfile machines.txt python DSAI3202-WINTER25/main.py
+Process 5 on vg-DSAI-3202-8: Computed 16666670 squares.
+Process 0 on vg-DSAI-3202-8: Total squares = 100000000
+Process 0 on vg-DSAI-3202-8: Max square = 10000000000000000
+Process 0 on vg-DSAI-3202-8: Time taken = 1.15 seconds
+Process 2 on vg-DSAI-3202-8: Computed 16666666 squares.
+Process 4 on vg-DSAI-3202-8: Computed 16666666 squares.
+Process 1 on vg-DSAI-3202-8: Computed 16666666 squares.
+Process 3 on vg-DSAI-3202-8: Computed 16666666 squares.
+
 ---
 
 ### Install Requirements
