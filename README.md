@@ -29,5 +29,5 @@ pip install mpi4py
 ```
 
 ### Running the program
-mpirun -np 4 --hostfile machines.txt python calculate_squares.py
+mpirun -np 4 --hostfile machines.txt python main.py
 
