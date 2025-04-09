@@ -3,10 +3,10 @@ Parallel and distributed computing repository for labs and assignments. Created 
 
 # DSAI 3202 – Lab 6: Distributed Square Calculation with MPI
 
-## 👨‍💻 Objective
+## Objective
 This lab demonstrates how to parallelize a computational task (squaring numbers from 1 to `n`) using the `mpi4py` library in Python. The implementation supports distributed execution across multiple machines, tracks which process ran on which host, and is optimized to scale to large values of `n`.
 
-## 🧠 Concepts Used
+## Concepts Used
 - Parallel and distributed computing
 - MPI (Message Passing Interface)
 - mpi4py (Python bindings for MPI)
