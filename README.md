@@ -20,6 +20,21 @@ This lab demonstrates how to parallelize a computational task (squaring numbers 
 - `machines.txt`: A text file listing the hostnames or IPs of machines used for MPI execution.
 - `README.md`: This documentation file.
 
+## Output
+### n = 1e8
+(base) student@vg-DSAI-3202-8:~$ mpirun -np 4 --hostfile machines.txt python DSAI3202-WINTER25/main.py
+Process 3 on vg-DSAI-3202-8: Computed 25000000 squares.
+Process 0 on vg-DSAI-3202-8: Total squares = 100000000
+Process 0 on vg-DSAI-3202-8: Max square = 10000000000000000
+Process 0 on vg-DSAI-3202-8: Time taken = 1.76 seconds
+Process 2 on vg-DSAI-3202-8: Computed 25000000 squares.
+Process 1 on vg-DSAI-3202-8: Computed 25000000 squares.
+(base) student@vg-DSAI-3202-8:~$ mpirun -np 2 --hostfile machines.txt python DSAI3202-WINTER25/main.py
+Process 0 on vg-DSAI-3202-8: Total squares = 100000000
+Process 0 on vg-DSAI-3202-8: Max square = 10000000000000000
+Process 0 on vg-DSAI-3202-8: Time taken = 3.36 seconds
+Process 1 on vg-DSAI-3202-8: Computed 50000000 squares.
+
 ---
 
 ### Install Requirements
