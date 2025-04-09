@@ -26,6 +26,7 @@ This lab demonstrates how to parallelize a computational task (squaring numbers 
 Ensure `mpi4py` is installed on **all machines**:
 ```bash
 pip install mpi4py
+```
 
 ### Running the program
 mpirun -np 4 --hostfile machines.txt python calculate_squares.py
