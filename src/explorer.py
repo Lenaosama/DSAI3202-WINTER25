@@ -6,8 +6,8 @@ import time
 import pygame
 from typing import Tuple, List, Optional, Deque
 from collections import deque
-from .constants import BLUE, WHITE, CELL_SIZE, WINDOW_SIZE
 from constants import BLUE, WHITE, CELL_SIZE, WINDOW_SIZE
+from .constants import BLUE, WHITE, CELL_SIZE, WINDOW_SIZE
 
 class Explorer:
     def __init__(self, maze, visualize: bool = False):
