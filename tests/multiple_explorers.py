@@ -1,6 +1,10 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
 import multiprocessing, time
-from src.maze import create_maze
-from src.explorer import Explorer
+from maze import create_maze
+from explorer import Explorer
 
 def run_explorer_instance(params):
     width, height, maze_type = params
