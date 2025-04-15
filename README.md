@@ -1,4 +1,4 @@
-## Answers are in a notebook file caled "answers" in the notebooks folder
+## **Answers are in a notebook file caled "answers" in the notebooks folder**
 
 ------------------------------------
 # Maze Explorer Game
