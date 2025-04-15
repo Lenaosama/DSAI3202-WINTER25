@@ -1,3 +1,6 @@
+## Answers are in a notebook file caled "answers" in the notebooks folder
+
+------------------------------------
 # Maze Explorer Game
 
 A simple maze exploration game built with Pygame where you can either manually navigate through a maze or watch an automated solver find its way to the exit.
