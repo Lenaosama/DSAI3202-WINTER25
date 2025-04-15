@@ -240,9 +240,9 @@ class Explorer:
 
 
     def _print_statistics(self):
-        print(f"\n=== {self.algorithm.upper()} Results ===")
+        print(f""\n=== Maze Exploration Statistics ==="")
         print(f"Total time taken: {self.statistics['time']:.2f}s")
         print(f"Total moves made: {self.statistics['moves']}")
         print(f"Number of backtrack operations: {self.statistics['backtracks']}")
         print(f"Average moves per second: {self.statistics['moves']/self.statistics['time']:.2f}")
-        print("===============================")
+        print("==================================\n")
