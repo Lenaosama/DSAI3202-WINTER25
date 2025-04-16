@@ -13,7 +13,7 @@ class Explorer:
     It delegates the actual solving process to one of several algorithm-specific
     solvers, such as BFS, DFS, A*, or Right-Hand Rule, depending on the input.
 
-    It also handles timing, statistics collection, and (optionally) visualization
+    It also handles timing, statistics collection, and visualization
     of the explorer's path using Pygame.
     """
 
@@ -54,7 +54,7 @@ class Explorer:
     def solve(self):
         """
         Core method that runs the selected solver's logic and times its performance.
-        It stores the resulting path, backtrack count (if supported), and total runtime.
+        It stores the resulting path, backtrack count, and total runtime.
         If visualization is enabled, it animates the path afterwards.
         """
         start_time = time.time()
