@@ -1,15 +1,13 @@
-"""
-Main entry point for the maze runner game.
-"""
-
 import argparse
 import multiprocessing
 from src.game import run_game
 from src.explorer import Explorer
 from src.maze import create_maze
 
+# Simple wrapper class used to pass maze layout and metadata
+# across processes when solving random mazes. This helps each
+# process recreate the same maze, ensuring fair comparison.
 class SimpleMaze:
-    """Lightweight maze class for parallel processing"""
     def __init__(self, grid, start, end, width, height):
         self.grid = grid
         self.start_pos = start
@@ -17,10 +15,12 @@ class SimpleMaze:
         self.width = width
         self.height = height
 
+# Worker function to run one automated explorer instance.
+# This function will be executed by multiple processes.
 def run_explorer_task(config):
-    """Task executed by each parallel explorer process"""
     try:
-        # Reconstruct maze from config
+        # Depending on maze type, either regenerate static maze
+        # or reconstruct shared random maze from passed config.
         if config["type"] == "static":
             maze = create_maze(0, 0, "static")
         else:
@@ -31,10 +31,12 @@ def run_explorer_task(config):
                 config["width"],
                 config["height"]
             )
-        
-        # Run exploration
+
+        # Run the explorer without visualization for speed
         explorer = Explorer(maze, visualize=False)
         time_taken, moves = explorer.solve()
+
+        # Return relevant stats (used later to identify best result)
         return {
             "time": time_taken,
             "moves": len(moves),
@@ -44,29 +46,23 @@ def run_explorer_task(config):
         print(f"Explorer failed: {str(e)}")
         return None
 
+# Main function: parses arguments, runs interactive or automated version
 def main():
     parser = argparse.ArgumentParser(description="Maze Runner Game")
-    parser.add_argument("--type", choices=["random", "static"], default="random",
-                      help="Type of maze (random or static)")
-    parser.add_argument("--width", type=int, default=30,
-                      help="Maze width (ignored for static)")
-    parser.add_argument("--height", type=int, default=30,
-                      help="Maze height (ignored for static)")
-    parser.add_argument("--auto", action="store_true",
-                      help="Enable automated exploration")
-    parser.add_argument("--visualize", action="store_true",
-                      help="Enable visualization")
-    parser.add_argument("--workers", type=int, default=4,
-                      help="Number of parallel explorers")
-
+    parser.add_argument("--type", choices=["random", "static"], default="random")
+    parser.add_argument("--width", type=int, default=30)
+    parser.add_argument("--height", type=int, default=30)
+    parser.add_argument("--auto", action="store_true")
+    parser.add_argument("--visualize", action="store_true")
+    parser.add_argument("--workers", type=int, default=4)
     args = parser.parse_args()
 
     if args.auto:
-        # Handle maze generation
+        # If using static maze, we don't need to pass dimensions.
+        # If using random maze, generate once and reuse for all processes.
         if args.type == "static":
             configs = [{"type": "static"}] * args.workers
         else:
-            # Generate once and share configuration
             maze = create_maze(args.width, args.height, "random")
             config = {
                 "type": "random",
@@ -78,35 +74,29 @@ def main():
             }
             configs = [config] * args.workers
 
-        # Run parallel explorers
+        # Use a multiprocessing pool to execute parallel maze solving
+        # Each worker will independently solve the maze and return results
         with multiprocessing.Pool(args.workers) as pool:
             results = pool.map(run_explorer_task, configs)
 
-        # Filter failed results
+        # Clean up and analyze only successful results
         valid_results = [r for r in results if r is not None]
-        
         if not valid_results:
             print("All explorers failed!")
             return
 
-        # Find best performer
+        # Select the best performer based on fewest moves
         best = min(valid_results, key=lambda x: x["moves"])
-        
-        # Print summary
+
         print("\n=== Exploration Results ===")
         print(f"Total explorers: {len(valid_results)}")
         print(f"Best time: {best['time']:.2f}s")
         print(f"Fewest moves: {best['moves']}")
         print(f"Backtracks: {best['backtracks']}")
         print("===========================")
-
     else:
-        # Run interactive game
-        run_game(
-            maze_type=args.type,
-            width=args.width,
-            height=args.height
-        )
+        # In interactive mode, the user plays using arrow keys
+        run_game(maze_type=args.type, width=args.width, height=args.height)
 
 if __name__ == "__main__":
     main()
