@@ -89,4 +89,34 @@ class Explorer:
         self.screen.fill(WHITE)
 
         for row in range(self.maze.height):
-            for col in range(self.maze
+            for col in range(self.maze.width):
+                if self.maze.grid[row][col] == 1:
+                    pygame.draw.rect(self.screen, BLACK,
+                                   (col*CELL_SIZE, row*CELL_SIZE,
+                                    CELL_SIZE, CELL_SIZE))
+        # Draw start/end
+        pygame.draw.rect(self.screen, GREEN,
+                        (self.maze.start_pos[0]*CELL_SIZE,
+                         self.maze.start_pos[1]*CELL_SIZE,
+                         CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(self.screen, RED,
+                        (self.maze.end_pos[0]*CELL_SIZE,
+                         self.maze.end_pos[1]*CELL_SIZE,
+                         CELL_SIZE, CELL_SIZE))
+        # Draw current position
+        pygame.draw.rect(self.screen, BLUE,
+                        (x*CELL_SIZE, y*CELL_SIZE,
+                         CELL_SIZE, CELL_SIZE))
+        pygame.display.flip()
+        self.clock.tick(60)
+
+
+
+    def _print_statistics(self):
+        print(f"\n=== Maze Exploration Statistics ===")
+        print(f"Total time taken: {self.statistics['time']:.2f}s")
+        print(f"Total moves made: {self.statistics['moves']}")
+        print(f"Number of backtrack operations: {self.statistics['backtracks']}")
+        print(f"Average moves per second: {self.statistics['moves']/self.statistics['time']:.2f}")
+        print("==================================\n")
+
